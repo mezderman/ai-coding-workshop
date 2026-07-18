@@ -10,10 +10,5 @@ sqlite.db-*
 # Claude Code local overrides
 .claude/settings.local.json
 
-# Matt Pocock skills — installed locally via `npx skills@latest add mattpocock/skills`
-.agents/
-.claude/skills/
-skills-lock.json
-
 # macOS
 .DS_Store
