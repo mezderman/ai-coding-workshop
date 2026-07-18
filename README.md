@@ -18,12 +18,38 @@ using an **engineering** workflow instead of vibe coding.
 | Path | What it is |
 |------|-----------|
 | `habit-tracker/` | The example app — Next.js + TypeScript + SQLite. Single user, no auth. Ships **finished**, with `client-brief.md`, `prd/`, and `issues/done/` showing the workflow that built it. |
-| `.claude/skills/` | The workshop skills, available to Claude Code across the whole repo: `grill-me`, `grill-with-docs`, `tdd`, `to-spec`, `to-tickets`. |
+| `.agents/skills/` + `.claude/skills/` | Matt Pocock's skills — canonical files live in `.agents/skills/`, with `.claude/skills/*` symlinked to them so Claude Code picks them up. See [Install Matt Pocock's skills](#install-matt-pococks-skills) below. |
 | `ralph/` | The "Ralph" AFK loop — scripts + prompt that drive the agent through the issue backlog one slice at a time. See [`ralph/README.md`](ralph/README.md). |
 
 > The skills live in `.claude/skills/` at the repo root, so they're discovered by
 > Claude Code anywhere in the repo. Launch `claude` from the repo root (or from
 > `habit-tracker/`) and they'll be available as `/grill-me`, `/tdd`, etc.
+
+## Install Matt Pocock's skills
+
+The skills used in this workshop (`grill-me`, `grill-with-docs`, `tdd`, `to-spec`,
+`to-tickets`, and more) aren't hand-copied — they're installed with
+[skills.sh](https://skills.sh)'s CLI, which fetches them from
+[`mattpocock/skills`](https://github.com/mattpocock/skills) and wires them up for
+whichever coding agent(s) you pick (Claude Code, Cursor, Codex, ...):
+
+```bash
+npx skills@latest add mattpocock/skills
+```
+
+Pick the skills you want, select the agent(s) you use, and **make sure to select
+`/setup-matt-pocock-skills`**. Then run it once per repo:
+
+```
+/setup-matt-pocock-skills
+```
+
+It'll ask which issue tracker you use (GitHub, Linear, or local files), what
+triage labels you apply, and where to save generated docs (ADRs, glossary).
+
+This creates a canonical copy of each skill in `.agents/skills/`, and a symlink
+per agent (e.g. `.claude/skills/grill-me -> ../../.agents/skills/grill-me`) so
+the same files work across every harness you selected.
 
 ## Quickstart — run the habit-tracker
 
@@ -76,7 +102,7 @@ was used to build.
 
 ## Attribution
 
-The skills in `.claude/skills/` are vendored from
-[`mattpocock/skills`](https://github.com/mattpocock/skills) and remain under their
-original license. The workflow this workshop teaches is based on Matt Pocock's
-AI-development workflow.
+The skills in `.agents/skills/` (symlinked from `.claude/skills/`) are installed
+from [`mattpocock/skills`](https://github.com/mattpocock/skills) via
+[skills.sh](https://skills.sh) and remain under their original license. The
+workflow this workshop teaches is based on Matt Pocock's AI-development workflow.
