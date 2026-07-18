@@ -6,19 +6,6 @@ using an **engineering** workflow instead of vibe coding.
 `habit-tracker/` is a small, finished app that shipped a "motivation layer"
 (streaks + stats) by walking the full pipeline:
 
-```
-① Align (grill-me) → ② PRD → ③ Vertical-slice issues → ④ Ralph loop (TDD) → ⑤ Fresh-context review → ⑥ Human QA
-      HITL                HITL          HITL                    AFK                    AFK                  HITL
-```
-
-Everything left of the Ralph loop is **human-in-the-loop** (you can't loop over
-alignment). Everything from the loop onward can run **AFK** — because by then the
-work is broken into small, independently-verifiable slices.
-
-This repo ships the app **already built**, along with every artifact the workflow
-produced along the way (`client-brief.md`, `prd/`, `issues/done/`) — study it as a
-worked example, then apply the same flow to your own feature idea using the
-included skills and Ralph loop.
 
 ## Prerequisites
 

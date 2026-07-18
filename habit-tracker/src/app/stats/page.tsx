@@ -6,6 +6,11 @@ type Habit = { id: number; name: string };
 type HeatmapCell = { start: string; end: string; checked: boolean };
 type HabitStats = { completionRate: number; heatmap: HeatmapCell[] };
 
+function dayAbbrev(iso: string): string {
+  const date = new Date(iso + "T00:00:00");
+  return new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(date);
+}
+
 export default function StatsPage() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [statsByHabit, setStatsByHabit] = useState<Record<number, HabitStats>>({});
@@ -28,7 +33,7 @@ export default function StatsPage() {
   return (
     <>
       <h1 className="page-title">Stats</h1>
-      <p className="page-subtitle">Completion rate for each habit.</p>
+      <p className="page-subtitle">Check-in history for each habit.</p>
 
       {habits.map((habit) => {
         const stats = statsByHabit[habit.id];
@@ -36,20 +41,19 @@ export default function StatsPage() {
           <div key={habit.id} className="card">
             <div className="stats-card-header">
               <span className="stats-habit-name">{habit.name}</span>
-              <span className="stats-completion-rate">
-                {stats ? `${Math.round(stats.completionRate * 100)}%` : "…"}
-              </span>
             </div>
             {stats && (
               <div className="stats-heatmap">
                 {stats.heatmap.map((cell) => (
-                  <div
-                    key={cell.start}
-                    className={`stats-heatmap-cell${
-                      cell.checked ? " stats-heatmap-cell--checked" : ""
-                    }`}
-                    title={cell.start === cell.end ? cell.start : `${cell.start} – ${cell.end}`}
-                  />
+                  <div key={cell.start} className="stats-heatmap-day">
+                    <span className="stats-heatmap-day-label">{dayAbbrev(cell.start)}</span>
+                    <div
+                      className={`stats-heatmap-cell${
+                        cell.checked ? " stats-heatmap-cell--checked" : ""
+                      }`}
+                      title={cell.start === cell.end ? cell.start : `${cell.start} – ${cell.end}`}
+                    />
+                  </div>
                 ))}
               </div>
             )}

@@ -121,20 +121,23 @@ export function completionRate(
 
 export type HeatmapCell = Period & { checked: boolean };
 
+const HEATMAP_DAYS = 7;
+
+/**
+ * Fixed 7-day rolling window (today and the 6 days before it), one cell
+ * per calendar day, regardless of habit age or frequency.
+ */
 export function heatmapCells(
   db: DatabaseSync,
   habitId: number,
   today: string = todayIso()
 ): HeatmapCell[] {
-  const habit = db.prepare("SELECT * FROM habits WHERE id = ?").get(habitId) as Habit;
-  const createdDate = habit.created_at.slice(0, 10);
-  const periods = getPeriods(createdDate, habit.frequency, today);
-  const checkInDates = listCheckIns(db, habitId).map((c) => c.date);
+  const checkInDates = new Set(listCheckIns(db, habitId).map((c) => c.date));
 
-  return periods.map((period) => ({
-    ...period,
-    checked: checkInDates.some((date) => date >= period.start && date <= period.end),
-  }));
+  return Array.from({ length: HEATMAP_DAYS }, (_, i) => {
+    const day = addDays(today, i - (HEATMAP_DAYS - 1));
+    return { start: day, end: day, checked: checkInDates.has(day) };
+  });
 }
 
 /**

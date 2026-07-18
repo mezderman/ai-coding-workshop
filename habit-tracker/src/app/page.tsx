@@ -8,15 +8,6 @@ type CheckInEntry = { id: number; habit_id: number; date: string; habitName: str
 
 const DAYS_BACK = 7;
 
-function streakBadge(streak: number | null): string | null {
-  return streak !== null && streak >= 2 ? `🔥 ${streak}` : null;
-}
-
-function optionLabel(habit: Habit): string {
-  const badge = streakBadge(habit.streak);
-  return badge ? `${habit.name} (${badge})` : habit.name;
-}
-
 function lastNDays(n: number): string[] {
   const today = new Date();
   const days: string[] = [];
@@ -90,7 +81,6 @@ export default function JournalPage() {
 
       {dates.map((date) => {
         const entries = entriesByDate[date] ?? [];
-        const habitsById = new Map(habits.map((h) => [h.id, h]));
         const loggedHabitIds = new Set(entries.map((e) => e.habit_id));
         const availableHabits = habits.filter((h) => !loggedHabitIds.has(h.id));
         const pickerOpen = openPickerDate === date;
@@ -117,7 +107,7 @@ export default function JournalPage() {
                     </option>
                     {availableHabits.map((h) => (
                       <option key={h.id} value={h.id}>
-                        {optionLabel(h)}
+                        {h.name}
                       </option>
                     ))}
                   </select>
@@ -136,14 +126,9 @@ export default function JournalPage() {
             {entries.length === 0 ? (
               <p className="empty-state">Nothing logged.</p>
             ) : (
-              entries.map((entry) => {
-                const badge = streakBadge(habitsById.get(entry.habit_id)?.streak ?? null);
-                return (
+              entries.map((entry) => (
                 <div key={entry.id} className="activity-chip">
-                  <span>
-                    {entry.habitName}
-                    {badge && <span className="activity-chip-streak">{badge}</span>}
-                  </span>
+                  <span>{entry.habitName}</span>
                   <button
                     className="activity-chip-remove"
                     onClick={() => removeActivity(date, entry.habit_id)}
@@ -152,8 +137,7 @@ export default function JournalPage() {
                     ×
                   </button>
                 </div>
-                );
-              })
+              ))
             )}
           </div>
         );

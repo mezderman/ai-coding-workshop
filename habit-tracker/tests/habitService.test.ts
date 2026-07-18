@@ -125,37 +125,61 @@ describe("habitService", () => {
   });
 
   describe("heatmapCells", () => {
-    it("produces one cell per calendar day for a daily habit, correctly marked", () => {
+    it("produces a fixed 7-day rolling window ending today, correctly marked", () => {
       const habit = createHabit(db, { name: "Read" });
       setCreatedAt(db, habit.id, "2026-07-01");
-      checkIn(db, habit.id, "2026-07-01");
       checkIn(db, habit.id, "2026-07-03");
+      checkIn(db, habit.id, "2026-07-05");
 
       const cells = heatmapCells(db, habit.id, "2026-07-05");
-      expect(cells).toHaveLength(5);
-      expect(cells.map((c) => c.checked)).toEqual([true, false, true, false, false]);
-      expect(cells[0].start).toBe("2026-07-01");
-      expect(cells[0].end).toBe("2026-07-01");
+      expect(cells).toHaveLength(7);
+      expect(cells.map((c) => c.start)).toEqual([
+        "2026-06-29",
+        "2026-06-30",
+        "2026-07-01",
+        "2026-07-02",
+        "2026-07-03",
+        "2026-07-04",
+        "2026-07-05",
+      ]);
+      expect(cells.map((c) => c.checked)).toEqual([
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        true,
+      ]);
+      expect(cells[6]).toEqual({ start: "2026-07-05", end: "2026-07-05", checked: true });
     });
 
-    it("produces one cell per rolling period for a weekly habit, correctly marked", () => {
+    it("returns a fixed 7-day window for a weekly habit too, marked by exact day", () => {
       const habit = createHabit(db, { name: "Exercise", frequency: "weekly" });
       setCreatedAt(db, habit.id, "2026-07-01");
-      checkIn(db, habit.id, "2026-07-02"); // period 1 (07-01..07-07)
-      checkIn(db, habit.id, "2026-07-12"); // period 2 (07-08..07-14)
+      checkIn(db, habit.id, "2026-07-02");
 
-      const cells = heatmapCells(db, habit.id, "2026-07-16");
-      expect(cells).toHaveLength(3);
-      expect(cells.map((c) => c.checked)).toEqual([true, true, false]);
-      expect(cells[1]).toEqual({ start: "2026-07-08", end: "2026-07-14", checked: true });
+      const cells = heatmapCells(db, habit.id, "2026-07-05");
+      expect(cells).toHaveLength(7);
+      expect(cells.map((c) => c.checked)).toEqual([
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+      ]);
     });
 
-    it("produces a single unchecked cell for a brand-new habit with no check-ins", () => {
+    it("produces 7 unchecked cells for a brand-new habit with no check-ins", () => {
       const habit = createHabit(db, { name: "Read" });
       setCreatedAt(db, habit.id, "2026-07-14");
 
       const cells = heatmapCells(db, habit.id, "2026-07-14");
-      expect(cells).toEqual([{ start: "2026-07-14", end: "2026-07-14", checked: false }]);
+      expect(cells).toHaveLength(7);
+      expect(cells.every((c) => !c.checked)).toBe(true);
+      expect(cells[6]).toEqual({ start: "2026-07-14", end: "2026-07-14", checked: false });
     });
   });
 
