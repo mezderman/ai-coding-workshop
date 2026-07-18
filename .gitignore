@@ -1,0 +1,14 @@
+# dependencies / build
+node_modules/
+.next/
+*.tsbuildinfo
+
+# local database (regenerated on first run)
+sqlite.db
+sqlite.db-*
+
+# Claude Code local overrides
+.claude/settings.local.json
+
+# macOS
+.DS_Store
