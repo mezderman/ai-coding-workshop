@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 This skill takes a specify doc from `/specify`, together with the current conversation context and codebase understanding, and produces a spec (you may know this document as a PRD). Do NOT interview the user — just synthesize what's in the specify doc and what you already know.
 
-**Requires an argument**: the path to the specify doc, e.g. `/to-spec specify/specify-<feature-mame>.md`. If no argument is given, stop and ask the user which specify doc to use rather than proceeding without one.
+**Source**: a specify doc's Decisions section, either already in context or passed as a path (e.g. `/to-spec specify/specify-<feature-name>.md`). If neither is available, stop and ask the user which specify doc to use — don't re-derive decisions from general conversation.
 
 ## Process
 
