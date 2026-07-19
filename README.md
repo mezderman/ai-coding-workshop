@@ -65,7 +65,7 @@ was used to build.
 ## Apply the workflow to your own feature
 
 A ready-made brief is waiting for you at [`client-brief-points.md`](client-brief-points.md)
-— the next slice of the motivation layer (points, levels, badges) that hasn't
+— the next slice of the motivation layer (points, levels) that hasn't
 been built yet. Use it for the exercise below, or swap in your own idea.
 
 1. **Align — `/grill-me`.** From `habit-tracker/`, start a fresh Claude Code
