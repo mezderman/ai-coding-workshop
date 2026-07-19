@@ -18,7 +18,7 @@ This skill takes a specify doc from `/specify`, together with the current conver
 
 Check with the user that these seams match their expectations.
 
-4. Write the spec using the template below, then publish it to the project issue tracker. Apply the `ready-for-agent` triage label - no need for additional triage.
+4. Write the spec using the template below, then publish it to the project issue tracker. If no issue tracker is configured, write it instead to `<repo-root>/prd/PRD-<feature-slug>.md`, where `<repo-root>` is the top of the current git working tree — not the current working directory, and not nested inside a project subdirectory (e.g. a `prd/` folder should sit alongside `specify/`, as a sibling to project directories like `habit-tracker/`, not inside them). Apply the `ready-for-agent` triage label - no need for additional triage.
 
 <spec-template>
 
