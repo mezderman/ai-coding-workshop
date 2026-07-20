@@ -10,8 +10,9 @@ APP_DIR="${APP_DIR:-$REPO_ROOT/habit-tracker}"
 prompt=$(cat "$RALPH_DIR/prompt.md")
 
 cd "$APP_DIR"
-issues=$(cat issues/*.md 2>/dev/null || echo "No issues found")
+tickets=$(shopt -s nullglob; cat "$REPO_ROOT"/tickets/*.md "$REPO_ROOT"/tickets/done/*.md 2>/dev/null)
+tickets="${tickets:-No tickets found}"
 commits=$(git log -n 5 --format="%H%n%ad%n%B---" --date=short 2>/dev/null || echo "No commits found")
 
 claude --permission-mode bypassPermissions \
-  "Previous commits: $commits Issues: $issues $prompt"
+  "Previous commits: $commits Tickets: $tickets $prompt"

@@ -8,18 +8,19 @@ the agent can grind through them unattended.
 Each iteration, the loop feeds Claude Code:
 
 - the last 5 git commits (so it knows what's already done), and
-- every open issue file from `habit-tracker/issues/`,
+- every ticket file from `tickets/` at the repo root,
 
-then hands it [`prompt.md`](prompt.md), which tells it to **pick the next task,
-implement it with `/tdd`, run the feedback loops (`npm run test`, `npm run
-typecheck`), and commit.** When the backlog is empty the agent emits
-`<promise>NO MORE TASKS</promise>` and the loop stops.
+then hands it [`prompt.md`](prompt.md), which tells it to **work the frontier —
+pick the next ticket whose blockers are done, implement it with `/tdd`, run the
+feedback loops (`npm run test`, `npm run typecheck`), and commit.** When no
+ticket on the frontier is ready, the agent emits `<promise>NO MORE
+TASKS</promise>` and the loop stops.
 
 ## Files
 
 | File | What it does |
 |------|--------------|
-| `prompt.md` | The instructions given to the agent every iteration: task selection, TDD, feedback loops, commit format, issue bookkeeping. |
+| `prompt.md` | The instructions given to the agent every iteration: task selection, TDD, feedback loops, commit format, ticket bookkeeping. |
 | `ralph-once.sh` | Run a **single** iteration. Good for watching one step end-to-end. |
 | `ralph-loop.sh` | Run **N** iterations back-to-back, streaming the agent's output, stopping early when the backlog is exhausted. |
 
@@ -29,9 +30,12 @@ typecheck`), and commit.** When the backlog is empty the agent emits
 - `habit-tracker/` must be a git repo with at least one commit (the loop reads
   `git log` and makes commits). If you cloned this workshop repo, that's already
   true — the whole repo is one git repo.
-- The issue backlog: generate it earlier in the workshop with `/to-tickets`, which
-  writes issue files into `habit-tracker/issues/`. Completed issues get moved to
-  `habit-tracker/issues/done/`.
+- The ticket backlog: generate it earlier in the workshop with `/to-tickets`, which
+  writes ticket files into `tickets/` at the repo root (flat, not nested under a
+  project subdirectory). As each ticket completes, its `Status:` field is set to
+  `done` and the file moves into `tickets/done/`; both `tickets/*.md` and
+  `tickets/done/*.md` are fed to each iteration so frontier/blocked-by checks
+  still see completed tickets.
 - `ralph-loop.sh` also needs `jq` for streamed output.
 
 ## Run it
@@ -57,8 +61,12 @@ SANDBOX=1 ./ralph/ralph-loop.sh 5
 
 ## How each iteration ends
 
-- **Task finished** → the issue file is moved to `issues/done/` and a commit is made.
-- **Task not finished** → a note is appended to the issue file describing what was
-  done, so the next iteration can pick up where it left off.
+- **Task finished** → the ticket file's `Status:` field is set to `done`, its
+  completed acceptance criteria are checked off, and the file moves into
+  `tickets/done/`. A commit is made for the code/test changes only — ticket
+  files are never staged or committed.
+- **Task not finished** → a note is appended to the ticket file describing what
+  was done, so the next iteration can pick up where it left off, and `Status:`
+  stays `ready-for-agent` with the file still in `tickets/`.
 - **Nothing left** → the agent prints `<promise>NO MORE TASKS</promise>` and
   `ralph-loop.sh` exits.

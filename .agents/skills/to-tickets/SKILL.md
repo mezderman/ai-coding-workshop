@@ -1,6 +1,6 @@
 ---
 name: to-tickets
-description: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges as text, and write one file per ticket to <repo-root>/tickets/<feature-slug>/.
+description: Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges as text, and write one file per ticket to <repo-root>/tickets/.
 disable-model-invocation: true
 ---
 
@@ -56,7 +56,7 @@ Iterate until the user approves the breakdown.
 
 ### 5. Write the tickets to disk
 
-Write one file per ticket under `<repo-root>/tickets/<feature-slug>/<NN>-<slug>.md`, where `<repo-root>` is the top of the current git working tree — not the current working directory, and not nested inside a project subdirectory (e.g. a `tickets/` folder should sit alongside `specify/`, as a sibling to project directories like `habit-tracker/`, not inside them). Number files from `01` in dependency order (blockers first). Each file's "Blocked by" lists the numbers/titles it depends on. Use the ticket file template below — one ticket per file, never a single combined file.
+Write one file per ticket directly under `<repo-root>/tickets/<NN>-<slug>.md` — flat, no per-feature subfolder — where `<repo-root>` is the top of the current git working tree — not the current working directory, and not nested inside a project subdirectory (e.g. `tickets/` should sit alongside `specify/`, as a sibling to project directories like `habit-tracker/`, not inside them). The `<feature-slug>` prefix keeps tickets from different features sorted together without colliding on number. Number files from `01` in dependency order (blockers first) within each feature. Each file's "Blocked by" lists the numbers/titles it depends on. Use the ticket file template below — one ticket per file, never a single combined file.
 
 Work the **frontier**: any ticket whose blockers are all done. For a purely linear chain that means top to bottom.
 

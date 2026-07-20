@@ -27,7 +27,8 @@ for ((i=1; i<=$1; i++)); do
   echo "=== Ralph iteration $i/$1 ==="
 
   commits=$(git log -n 5 --format="%H%n%ad%n%B---" --date=short 2>/dev/null || echo "No commits found")
-  issues=$(cat issues/*.md 2>/dev/null || echo "No issues found")
+  tickets=$(shopt -s nullglob; cat "$REPO_ROOT"/tickets/*.md "$REPO_ROOT"/tickets/done/*.md 2>/dev/null)
+  tickets="${tickets:-No tickets found}"
   prompt=$(cat "$RALPH_DIR/prompt.md")
 
   tmpfile=$(mktemp)
@@ -37,7 +38,7 @@ for ((i=1; i<=$1; i++)); do
     --print \
     --output-format stream-json \
     --permission-mode bypassPermissions \
-    "Previous commits: $commits Issues: $issues $prompt" \
+    "Previous commits: $commits Tickets: $tickets $prompt" \
   | grep --line-buffered '^{' \
   | tee "$tmpfile" \
   | jq --unbuffered -rj "$stream_text"
